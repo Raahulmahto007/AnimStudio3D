@@ -17,9 +17,9 @@ The GitHub Actions workflow performs these steps and uploads the debug APK artif
 - A timed 30-second storyboard preview.
 - Dialogue text, device text-to-speech preview, subtitle overlay, character color controls, camera and speed controls.
 - Project JSON save/load including dialogue, scene settings and added props.
-- 30-second viewport recording as WebM when supported by the device WebView.
+- 30-second viewport recording, preferring MP4 when supported by Android WebView and falling back to WebM.
 
 ## Important limitations
-This is not yet a professional, general-purpose animation suite. The character is procedurally generated and does not use a production-quality skeletal rig or motion-capture data. Dialogue TTS is preview-only and is not muxed into exported video. MP4 export, frame-accurate phoneme lip-sync, arbitrary scene construction, multiple characters, full object manipulation, and broad Android-device QA are not implemented. Export depends on MediaRecorder support. Static checks and a successful build do not replace installation and real-device testing.
+This is not yet a professional, general-purpose animation suite. The character is procedurally generated and does not use a production-quality skeletal rig or motion-capture data. Dialogue TTS is preview-only and is not muxed into exported video. Guaranteed MP4 export on every device (the app uses MP4 only when MediaRecorder reports support, otherwise WebM), embedded dialogue audio, frame-accurate phoneme lip-sync, arbitrary scene construction, multiple characters, full object manipulation, and broad Android-device QA are not implemented. Export depends on MediaRecorder support. Static checks and a successful build do not replace installation and real-device testing.
 
 The Three.js runtime is downloaded at build time and packaged locally, so the installed app can render its 3D scene without fetching Three.js at runtime.
