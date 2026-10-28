@@ -22,6 +22,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Vendor Three.js for offline runtime
+        run: |
+          mkdir -p app/src/main/assets
+          curl --fail --location --retry 3 --output app/src/main/assets/three.module.js https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js
+          curl --fail --location --retry 3 --output app/src/main/assets/THREE-LICENSE.txt https://raw.githubusercontent.com/mrdoob/three.js/r170/LICENSE
       - name: Validate animation editor assets
         run: python3 scripts/validate_web_assets.py
       - name: Set up Java 17
