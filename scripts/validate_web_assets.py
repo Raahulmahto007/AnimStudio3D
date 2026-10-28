@@ -40,6 +40,27 @@ try:
         raise SystemExit("FAIL: JavaScript syntax validation")
 finally:
     temp_path.unlink(missing_ok=True)
+# Check the scripted demo has a bounded 30-second timeline and the expected key actions.
+storyboard_start = html.find('const storyboard=[')
+storyboard_end = html.find('];', storyboard_start)
+if storyboard_start < 0 or storyboard_end < 0:
+    raise SystemExit('FAIL: storyboard definition missing')
+storyboard_text = html[storyboard_start:storyboard_end]
+segments = re.findall(r"\{start:(\d+),end:(\d+),action:'([a-z]+)'\}", storyboard_text)
+if len(segments) < 8 or int(segments[0][0]) != 0 or int(segments[-1][1]) != 30:
+    raise SystemExit('FAIL: storyboard does not cover the complete 30-second demo')
+actions = {name for _, _, name in segments}
+if not {'walk', 'turn', 'talk', 'pick', 'place', 'point', 'happy'}.issubset(actions):
+    raise SystemExit('FAIL: storyboard is missing required animation actions')
+if "scriptMode=true;lastScriptAction=''" not in html:
+    raise SystemExit('FAIL: video export does not trigger storyboard mode')
+main_path = Path('app/src/main/java/com/animstudio3d/MainActivity.java')
+main_java = main_path.read_text(encoding='utf-8')
+for marker in ['WebViewAssetLoader', 'AndroidBridge', 'onShowFileChooser', 'MediaStore.Downloads']:
+    if marker not in main_java:
+        raise SystemExit(f'FAIL: Android integration marker missing: {marker}')
 print("PASS: required UI markers found")
+print("PASS: 30-second storyboard and required actions found")
+print("PASS: Android save/load bridge markers found")
 print("PASS: module JavaScript syntax valid")
 print("NOTE: this is static validation; it does not replace Android-device visual, interaction, or export testing.")
