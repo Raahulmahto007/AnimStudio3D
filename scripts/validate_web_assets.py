@@ -12,7 +12,7 @@ if not html_path.exists():
 html = html_path.read_text(encoding="utf-8")
 required = [
     'id="view"', 'id="composite"', 'id="dialogue"',
-    'id="subtitle"', 'window.saveProject', 'window.loadProject',
+    'id="subtitle"', "import * as THREE from './three.module.js';", 'window.saveProject', 'window.loadProject',
     'window.exportVideo', 'window.speakDialogue',
     "new THREE.WebGLRenderer", "renderer.render(scene,camera)",
 ]
@@ -21,6 +21,11 @@ if missing:
     print("FAIL: required UI/runtime markers missing:")
     print("\n".join(" - " + item for item in missing))
     raise SystemExit(1)
+vendor = Path('app/src/main/assets/three.module.js')
+if not vendor.exists() or vendor.stat().st_size < 100000:
+    raise SystemExit('FAIL: local Three.js runtime missing or unexpectedly small')
+if not Path('app/src/main/assets/THREE-LICENSE.txt').exists():
+    raise SystemExit('FAIL: Three.js license file missing')
 scripts = re.findall(r'<script type="module">(.*?)</script>', html, re.S)
 if len(scripts) != 1:
     raise SystemExit(f"FAIL: expected one module script, found {len(scripts)}")
